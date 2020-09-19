@@ -19,11 +19,11 @@ public class CustomerTest {
 
     private Customer dinsdale = new Customer("Dinsdale Pirhana");
 
-    private Movie python = new Movie("Monty Python and the Holy Grail", Movie.REGULAR);
-	private Movie ran = new Movie("Ran", Movie.REGULAR);
-	private Movie la = new Movie("LA Confidential", Movie.NEW_RELEASE);
-	private Movie trek = new Movie("Star Trek 13.2", Movie.NEW_RELEASE);
-	private Movie wallace = new Movie("Wallace and Gromit", Movie.CHILDRENS);
+    private Movie python = new RegularMovie("Monty Python and the Holy Grail", Movie.REGULAR);
+	private Movie ran = new RegularMovie("Ran", Movie.REGULAR);
+	private Movie la = new NewReleaseMovie("LA Confidential", Movie.NEW_RELEASE);
+	private Movie trek = new NewReleaseMovie("Star Trek 13.2", Movie.NEW_RELEASE);
+	private Movie wallace = new ChildrenMovie("Wallace and Gromit", Movie.CHILDRENS);
 
     @BeforeEach
     public void setUpData(){
@@ -47,16 +47,17 @@ public class CustomerTest {
 
     @Test
     public void shouldOutputChangedStatement() throws Exception {
-        la.setPriceCode(Movie.REGULAR);
+        List<Rental> rentalList=dinsdale.getRentalList();
+        for (Rental rental : rentalList) {
+            if (rental.getMovie()==la){
+                rentalList.add(rentalList.indexOf(rental),new Rental (new RegularMovie("LA Confidential"), 2) );
+                rentalList.remove(rental);
+                break;
+            }
+        }
         verifyOutput(dinsdale.statement(), "outputChange");
     }
 
-    /*
-    public void testHtml() throws Exception {
-        verifyOutput("1st Output", "outputHtml", dinsdale.htmlStatement());
-    }
-    */
-    	
     protected void verifyOutput(String actualValue, String fileName) throws IOException{
         String filePath = getClass().getClassLoader().getResource(GOLD_PATH + fileName).getPath();
         BufferedReader file = new BufferedReader (new FileReader (filePath));
